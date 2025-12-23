@@ -1,3 +1,23 @@
+package com.example.demo.service.impl;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.AnomalyFlagRecord;
+import com.example.demo.model.EmployeeProfile;
+import com.example.demo.model.ProductivityMetricRecord;
+import com.example.demo.repository.AnomalyFlagRecordRepository;
+import com.example.demo.repository.AnomalyRuleRepository;
+import com.example.demo.repository.EmployeeProfileRepository;
+import com.example.demo.repository.ProductivityMetricRecordRepository;
+import com.example.demo.service.ProductivityMetricService;
+import com.example.demo.util.ProductivityCalculator;
+
 @Service
 @Transactional
 public class ProductivityMetricServiceImpl implements ProductivityMetricService {
@@ -22,17 +42,14 @@ public class ProductivityMetricServiceImpl implements ProductivityMetricService 
     @Override
     public ProductivityMetricRecord recordMetric(ProductivityMetricRecord metric) {
 
-        Long empId = metric.getEmployeeId();
-
-        EmployeeProfile employee = employeeRepo.findById(empId)
+        EmployeeProfile employee = employeeRepo.findById(metric.getEmployeeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
         if (!employee.getActive()) {
             throw new IllegalStateException("Employee not active");
         }
 
-        boolean exists = metricRepo
-                .findByEmployeeId(empId)
+        boolean exists = metricRepo.findByEmployeeId(metric.getEmployeeId())
                 .stream()
                 .anyMatch(m -> m.getDate().equals(metric.getDate()));
 
@@ -54,7 +71,7 @@ public class ProductivityMetricServiceImpl implements ProductivityMetricService 
         ruleRepo.findByActiveTrue().forEach(rule -> {
             if (saved.getProductivityScore() < rule.getThresholdValue()) {
                 AnomalyFlagRecord flag = new AnomalyFlagRecord();
-                flag.setEmployeeId(empId);
+                flag.setEmployeeId(saved.getEmployeeId());
                 flag.setMetricId(saved.getId());
                 flag.setRuleCode(rule.getRuleCode());
                 flag.setSeverity("LOW");
@@ -83,7 +100,6 @@ public class ProductivityMetricServiceImpl implements ProductivityMetricService 
         );
 
         existing.setProductivityScore(score);
-
         return metricRepo.save(existing);
     }
 
