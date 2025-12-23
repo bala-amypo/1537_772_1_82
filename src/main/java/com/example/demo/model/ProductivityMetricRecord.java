@@ -1,37 +1,61 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(
-    name = "productivity_metric_records",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"employee_id", "date"})
-    }
-)
+@Table(name = "productivity_metric_records")
 public class ProductivityMetricRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /* ---------- Relationships ---------- */
+    @Column(name = "employee_id", nullable = false)
+    private Long employeeId;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "employee_id")
-    private EmployeeProfile employee;
+    @Column(name = "metric_name", nullable = false)
+    private String metricName;
 
-    @OneToMany(mappedBy = "metric", cascade = CascadeType.ALL)
-    private List<AnomalyFlagRecord> anomalyFlags;
+    @Column(name = "metric_value", nullable = false)
+    private Integer metricValue;
 
-    /* ---------- Fields ---------- */
+    public ProductivityMetricRecord() {
+    }
 
-    private LocalDate date;
+    public Long getId() {
+        return id;
+    }
 
-    private Double hoursLogged;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    private Integer
+    public Long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public String getMetricName() {
+        return metricName;
+    }
+
+    public void setMetricName(String metricName) {
+        this.metricName = metricName;
+    }
+
+    public Integer getMetricValue() {
+        return metricValue;
+    }
+
+    public void setMetricValue(Integer metricValue) {
+        this.metricValue = metricValue;
+    }
 }
