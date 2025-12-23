@@ -37,3 +37,6 @@ public class Credential {
     }
 
     public void setCredentialId(String credentialId) {
+        this.credentialId = credentialId;
+    }
+}

@@ -31,33 +31,41 @@ public class TeamSummaryServiceImpl implements TeamSummaryService {
 
         summaryRepo.findByTeamNameAndSummaryDate(teamName, summaryDate)
                 .ifPresent(s -> {
-                    throw new IllegalStateException("Summary already exists for this team and date");
+                    throw new IllegalStateException(
+                            "Summary already exists for this team and date"
+                    );
                 });
 
         List<ProductivityMetricRecord> metrics =
                 metricRepo.findAll().stream()
-                        .filter(m -> m.getEmployee().getTeamName().equals(teamName))
-                        .filter(m -> m.getDate().equals(summaryDate))
+                        .filter(m -> m.getEmployee() != null)
+                        .filter(m -> teamName.equals(m.getEmployee().getTeamName()))
+                        .filter(m -> summaryDate.equals(m.getDate()))
                         .toList();
 
         if (metrics.isEmpty()) {
-            throw new ResourceNotFoundException("Summary not found");
+            throw new ResourceNotFoundException("No productivity data found for summary");
         }
 
         double avgHours = metrics.stream()
-                .mapToDouble(m -> m.getHoursLogged() == null ? 0 : m.getHoursLogged())
-                .average().orElse(0);
+                .mapToDouble(m -> m.getHoursLogged() != null ? m.getHoursLogged() : 0.0)
+                .average()
+                .orElse(0.0);
 
         double avgTasks = metrics.stream()
-                .mapToInt(m -> m.getTasksCompleted() == null ? 0 : m.getTasksCompleted())
-                .average().orElse(0);
+                .mapToInt(m -> m.getTasksCompleted() != null ? m.getTasksCompleted() : 0)
+                .average()
+                .orElse(0.0);
 
         double avgScore = metrics.stream()
-                .mapToDouble(m -> m.getProductivityScore() == null ? 0 : m.getProductivityScore())
-                .average().orElse(0);
+                .mapToDouble(m -> m.getProductivityScore() != null ? m.getProductivityScore() : 0.0)
+                .average()
+                .orElse(0.0);
 
         int anomalyCount = metrics.stream()
-                .mapToInt(m -> m.getAnomalyFlags() == null ? 0 : m.getAnomalyFlags().size())
+                .mapToInt(m ->
+                        m.getAnomalyFlags() != null ? m.getAnomalyFlags().size() : 0
+                )
                 .sum();
 
         TeamSummaryRecord summary = new TeamSummaryRecord(
