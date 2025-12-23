@@ -4,7 +4,6 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.UserAccount;
 import com.example.demo.repository.UserAccountRepository;
 import com.example.demo.service.UserAccountService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,12 +14,11 @@ import java.util.Set;
 public class UserAccountServiceImpl implements UserAccountService {
 
     private final UserAccountRepository repository;
-    private final PasswordEncoder passwordEncoder;
 
     public UserAccountServiceImpl(UserAccountRepository repository,
-                                  PasswordEncoder passwordEncoder) {
+                                 ) {
         this.repository = repository;
-        this.passwordEncoder = passwordEncoder;
+        
     }
 
     @Override

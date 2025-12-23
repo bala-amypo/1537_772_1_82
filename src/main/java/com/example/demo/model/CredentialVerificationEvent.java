@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Credential {
+@Table(name = "credential_verification_events")
+public class CredentialVerificationEvent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

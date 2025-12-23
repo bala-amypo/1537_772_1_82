@@ -21,9 +21,7 @@ public class CredentialVerificationServiceImpl
     @Override
     public String verifyCredential(Long credentialId) {
 
-        CredentialVerificationEvent event =
-                new CredentialVerificationEvent();
-
+        CredentialVerificationEvent event = new CredentialVerificationEvent();
         event.setCredentialId(credentialId);
         event.setStatus("VERIFIED");
         event.setRemarks("Verification successful");
