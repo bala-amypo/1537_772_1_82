@@ -1,11 +1,8 @@
 package com.example.demo.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.util.Map;
 
 @Entity
 @Table(name = "productivity_metric_records")
@@ -15,47 +12,95 @@ public class ProductivityMetricRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "employee_id", nullable = false)
-    private Long employeeId;
+    @ManyToOne
+    @JoinColumn(name = "employee_id", nullable = false)
+    private EmployeeProfile employee;
 
-    @Column(name = "metric_name", nullable = false)
-    private String metricName;
+    @Column(nullable = false)
+    private LocalDate date;
 
-    @Column(name = "metric_value", nullable = false)
-    private Integer metricValue;
+    private int hoursLogged;
+    private int tasksCompleted;
+    private int meetingsAttended;
 
-    public ProductivityMetricRecord() {
-    }
+    private double productivityScore;
+
+    @Lob
+    private String rawDataJson;
+
+    @ElementCollection
+    @CollectionTable(name = "productivity_anomaly_flags")
+    @MapKeyColumn(name = "flag")
+    @Column(name = "value")
+    private Map<String, Boolean> anomalyFlags;
+
+    // ---------- getters & setters ----------
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public EmployeeProfile getEmployee() {
+        return employee;
     }
 
-    public Long getEmployeeId() {
-        return employeeId;
+    public void setEmployee(EmployeeProfile employee) {
+        this.employee = employee;
     }
 
-    public void setEmployeeId(Long employeeId) {
-        this.employeeId = employeeId;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public String getMetricName() {
-        return metricName;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
-    public void setMetricName(String metricName) {
-        this.metricName = metricName;
+    public int getHoursLogged() {
+        return hoursLogged;
     }
 
-    public Integer getMetricValue() {
-        return metricValue;
+    public void setHoursLogged(int hoursLogged) {
+        this.hoursLogged = hoursLogged;
     }
 
-    public void setMetricValue(Integer metricValue) {
-        this.metricValue = metricValue;
+    public int getTasksCompleted() {
+        return tasksCompleted;
+    }
+
+    public void setTasksCompleted(int tasksCompleted) {
+        this.tasksCompleted = tasksCompleted;
+    }
+
+    public int getMeetingsAttended() {
+        return meetingsAttended;
+    }
+
+    public void setMeetingsAttended(int meetingsAttended) {
+        this.meetingsAttended = meetingsAttended;
+    }
+
+    public double getProductivityScore() {
+        return productivityScore;
+    }
+
+    public void setProductivityScore(double productivityScore) {
+        this.productivityScore = productivityScore;
+    }
+
+    public String getRawDataJson() {
+        return rawDataJson;
+    }
+
+    public void setRawDataJson(String rawDataJson) {
+        this.rawDataJson = rawDataJson;
+    }
+
+    public Map<String, Boolean> getAnomalyFlags() {
+        return anomalyFlags;
+    }
+
+    public void setAnomalyFlags(Map<String, Boolean> anomalyFlags) {
+        this.anomalyFlags = anomalyFlags;
     }
 }
