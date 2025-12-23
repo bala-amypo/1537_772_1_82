@@ -44,28 +44,26 @@ public class TeamSummaryServiceImpl implements TeamSummaryService {
                         .toList();
 
         if (metrics.isEmpty()) {
-            throw new ResourceNotFoundException("No productivity data found for summary");
+            throw new ResourceNotFoundException("No productivity data found");
         }
 
         double avgHours = metrics.stream()
-                .mapToDouble(m -> m.getHoursLogged() != null ? m.getHoursLogged() : 0.0)
+                .mapToDouble(ProductivityMetricRecord::getHoursLogged)
                 .average()
                 .orElse(0.0);
 
         double avgTasks = metrics.stream()
-                .mapToInt(m -> m.getTasksCompleted() != null ? m.getTasksCompleted() : 0)
+                .mapToInt(ProductivityMetricRecord::getTasksCompleted)
                 .average()
                 .orElse(0.0);
 
         double avgScore = metrics.stream()
-                .mapToDouble(m -> m.getProductivityScore() != null ? m.getProductivityScore() : 0.0)
+                .mapToDouble(ProductivityMetricRecord::getProductivityScore)
                 .average()
                 .orElse(0.0);
 
         int anomalyCount = metrics.stream()
-                .mapToInt(m ->
-                        m.getAnomalyFlags() != null ? m.getAnomalyFlags().size() : 0
-                )
+                .mapToInt(m -> m.getAnomalyFlags() == null ? 0 : m.getAnomalyFlags().size())
                 .sum();
 
         TeamSummaryRecord summary = new TeamSummaryRecord(
