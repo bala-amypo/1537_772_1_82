@@ -17,13 +17,11 @@ public class AnomalyRuleController {
         this.service = service;
     }
 
-    /* 1. Create rule */
     @PostMapping
     public AnomalyRule create(@RequestBody AnomalyRule rule) {
         return service.createRule(rule);
     }
 
-    /* 2. Update rule */
     @PutMapping("/{id}")
     public AnomalyRule update(
             @PathVariable Long id,
@@ -31,13 +29,11 @@ public class AnomalyRuleController {
         return service.updateRule(id, rule);
     }
 
-    /* 3. Active rules */
     @GetMapping("/active")
     public List<AnomalyRule> activeRules() {
         return service.getActiveRules();
     }
 
-    /* 4. Get by id */
     @GetMapping("/{id}")
     public AnomalyRule getById(@PathVariable Long id) {
         return service.getAllRules().stream()
@@ -46,7 +42,6 @@ public class AnomalyRuleController {
                 .orElseThrow(() -> new ResourceNotFoundException("Rule not found"));
     }
 
-    /* 5. All rules */
     @GetMapping
     public List<AnomalyRule> all() {
         return service.getAllRules();
