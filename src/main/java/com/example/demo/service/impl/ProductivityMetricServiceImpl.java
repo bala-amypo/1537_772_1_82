@@ -37,9 +37,8 @@ public class ProductivityMetricServiceImpl implements ProductivityMetricService 
     }
 
     @Override
-    public ProductivityMetricRecord getMetricById(Long metricId) {
-        return metricRepo.findById(metricId)
-                .orElseThrow(() -> new RuntimeException("Metric not found"));
+    public Optional<ProductivityMetricRecord> getMetricById(Long metricId) {
+        return metricRepo.findById(metricId);
     }
 
     @Override
@@ -55,12 +54,23 @@ public class ProductivityMetricServiceImpl implements ProductivityMetricService 
     }
 
     @Override
-    public void saveMetric(ProductivityMetricRecord metricRecord) {
-        metricRepo.save(metricRecord);
+    public ProductivityMetricRecord saveMetric(ProductivityMetricRecord metricRecord) {
+        return metricRepo.save(metricRecord);
     }
 
     @Override
     public List<ProductivityMetricRecord> getAllMetrics() {
         return metricRepo.findAll();
+    }
+
+    @Override
+    public ProductivityMetricRecord updateMetric(Long metricId, ProductivityMetricRecord metric) {
+        return metricRepo.findById(metricId)
+                .map(existing -> {
+                    existing.setValue(metric.getValue()); // update fields
+                    existing.setDate(metric.getDate());
+                    return metricRepo.save(existing);
+                })
+                .orElseThrow(() -> new RuntimeException("Metric not found"));
     }
 }

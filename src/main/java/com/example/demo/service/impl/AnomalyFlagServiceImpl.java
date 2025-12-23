@@ -45,4 +45,9 @@ public class AnomalyFlagServiceImpl implements AnomalyFlagService {
     public List<AnomalyFlagRecord> getAllFlags() {
         return anomalyFlagRepository.findAll();
     }
+
+    @Override
+    public AnomalyFlagRecord flagAnomaly(AnomalyFlagRecord flag) {
+        return anomalyFlagRepository.save(flag);
+    }
 }
