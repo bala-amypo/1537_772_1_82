@@ -4,82 +4,50 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-    name = "credentials",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = "credentialId")
-    }
-)
 public class Credential {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /* Reference to EmployeeProfile */
-    private Long employeeId;
+    private Long credentialId;
+    private String status;
+    private String remarks;
+    private LocalDateTime verifiedAt;
 
-    @Column(nullable = false, unique = true)
-    private String credentialId;
+    public Long getId() {
+        return id;
+    }
 
-    private String issuer;
+    public Long getCredentialId() {
+        return credentialId;
+    }
 
-    private LocalDateTime issuedAt;
-
-    private LocalDateTime expiresAt;
-
-    private String status; // PENDING, VERIFIED, REVOKED, EXPIRED
-
-    @Lob
-    private String metadataJson;
-
-    /* ---------- Constructors ---------- */
-
-    public Credential() {}
-
-    public Credential(Long employeeId,
-                      String credentialId,
-                      String issuer,
-                      LocalDateTime expiresAt,
-                      String status,
-                      String metadataJson) {
-        this.employeeId = employeeId;
+    public void setCredentialId(Long credentialId) {
         this.credentialId = credentialId;
-        this.issuer = issuer;
-        this.expiresAt = expiresAt;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
         this.status = status;
-        this.metadataJson = metadataJson;
     }
 
-    @PrePersist
-    protected void onCreate() {
-        this.issuedAt = LocalDateTime.now();
-        if (this.status == null) {
-            this.status = "PENDING";
-        }
+    public String getRemarks() {
+        return remarks;
     }
 
-    /* ---------- Getters & Setters ---------- */
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 
-    public Long getId() { return id; }
+    public LocalDateTime getVerifiedAt() {
+        return verifiedAt;
+    }
 
-    public Long getEmployeeId() { return employeeId; }
-    public void setEmployeeId(Long employeeId) { this.employeeId = employeeId; }
-
-    public String getCredentialId() { return credentialId; }
-    public void setCredentialId(String credentialId) { this.credentialId = credentialId; }
-
-    public String getIssuer() { return issuer; }
-    public void setIssuer(String issuer) { this.issuer = issuer; }
-
-    public LocalDateTime getIssuedAt() { return issuedAt; }
-
-    public LocalDateTime getExpiresAt() { return expiresAt; }
-    public void setExpiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    public String getMetadataJson() { return metadataJson; }
-    public void setMetadataJson(String metadataJson) { this.metadataJson = metadataJson; }
+    public void setVerifiedAt(LocalDateTime verifiedAt) {
+        this.verifiedAt = verifiedAt;
+    }
 }
