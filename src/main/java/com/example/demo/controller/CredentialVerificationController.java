@@ -9,7 +9,8 @@ public class CredentialVerificationController {
 
     private final CredentialVerificationService service;
 
-    public CredentialVerificationController(CredentialVerificationService service) {
+    public CredentialVerificationController(
+            CredentialVerificationService service) {
         this.service = service;
     }
 

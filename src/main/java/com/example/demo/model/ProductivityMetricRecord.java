@@ -2,7 +2,7 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.Map;
+import java.util.List;
 
 @Entity
 @Table(name = "productivity_metric_records")
@@ -28,13 +28,11 @@ public class ProductivityMetricRecord {
     @Lob
     private String rawDataJson;
 
-    @ElementCollection
-    @CollectionTable(name = "productivity_anomaly_flags")
-    @MapKeyColumn(name = "flag")
-    @Column(name = "value")
-    private Map<String, Boolean> anomalyFlags;
+    @OneToMany
+    @JoinColumn(name = "metric_record_id")
+    private List<AnomalyFlagRecord> anomalyFlags;
 
-    // ---------- getters & setters ----------
+    // -------- getters & setters --------
 
     public Long getId() {
         return id;
@@ -96,11 +94,11 @@ public class ProductivityMetricRecord {
         this.rawDataJson = rawDataJson;
     }
 
-    public Map<String, Boolean> getAnomalyFlags() {
+    public List<AnomalyFlagRecord> getAnomalyFlags() {
         return anomalyFlags;
     }
 
-    public void setAnomalyFlags(Map<String, Boolean> anomalyFlags) {
+    public void setAnomalyFlags(List<AnomalyFlagRecord> anomalyFlags) {
         this.anomalyFlags = anomalyFlags;
     }
 }
