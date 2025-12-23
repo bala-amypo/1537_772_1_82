@@ -1,10 +1,11 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import jakarta.persistence.*;
+
 @Entity
-@Table(name = "anomaly_flags")
+@Table(name = "anomaly_flag_records")
 public class AnomalyFlagRecord {
 
     @Id
@@ -23,51 +24,70 @@ public class AnomalyFlagRecord {
 
     private LocalDateTime flaggedAt;
 
-    @Column(nullable = false)
-    private Boolean resolved = false;
+    private Boolean resolved;
 
-    /* ---------- Constructors ---------- */
-    public AnomalyFlagRecord() {}
-
-    public AnomalyFlagRecord(ProductivityMetricRecord metric, EmployeeProfile employee) {
-        this.metricId = metric.getId();
-        this.employeeId = employee.getId();
-        this.flaggedAt = LocalDateTime.now();
-        this.resolved = false;
+    public AnomalyFlagRecord() {
     }
 
-    public AnomalyFlagRecord(EmployeeProfile employee, ProductivityMetricRecord metric,
-                             String ruleCode, String severity, String details) {
-        this.employeeId = employee.getId();
-        this.metricId = metric.getId();
+    // getters & setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public Long getMetricId() {
+        return metricId;
+    }
+
+    public void setMetricId(Long metricId) {
+        this.metricId = metricId;
+    }
+
+    public String getRuleCode() {
+        return ruleCode;
+    }
+
+    public void setRuleCode(String ruleCode) {
         this.ruleCode = ruleCode;
-        this.severity = severity;
-        this.details = details;
-        this.flaggedAt = LocalDateTime.now();
-        this.resolved = false;
     }
 
-    /* ---------- Getters & Setters ---------- */
-    public Long getId() { return id; }
+    public String getSeverity() {
+        return severity;
+    }
 
-    public Long getEmployeeId() { return employeeId; }
-    public void setEmployeeId(Long employeeId) { this.employeeId = employeeId; }
+    public void setSeverity(String severity) {
+        this.severity = severity;
+    }
 
-    public Long getMetricId() { return metricId; }
-    public void setMetricId(Long metricId) { this.metricId = metricId; }
+    public String getDetails() {
+        return details;
+    }
 
-    public String getRuleCode() { return ruleCode; }
-    public void setRuleCode(String ruleCode) { this.ruleCode = ruleCode; }
+    public void setDetails(String details) {
+        this.details = details;
+    }
 
-    public String getSeverity() { return severity; }
-    public void setSeverity(String severity) { this.severity = severity; }
+    public LocalDateTime getFlaggedAt() {
+        return flaggedAt;
+    }
 
-    public String getDetails() { return details; }
-    public void setDetails(String details) { this.details = details; }
+    public void setFlaggedAt(LocalDateTime flaggedAt) {
+        this.flaggedAt = flaggedAt;
+    }
 
-    public LocalDateTime getFlaggedAt() { return flaggedAt; }
-    public void setFlaggedAt(LocalDateTime flaggedAt) { this.flaggedAt = flaggedAt; }
+    public Boolean getResolved() {
+        return resolved;
+    }
 
-    public Boolean getResolved() { return resolved; }
-    public void setResolved(Boolean resolved) { this.resolved = resolved; }
+    public void setResolved(Boolean resolved) {
+        this.resolved = resolved;
+    }
 }

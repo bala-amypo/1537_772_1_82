@@ -1,29 +1,90 @@
-package com.example.demo.service.impl;
-
-import com.example.demo.model.ProductivityMetricRecord;
-import com.example.demo.model.EmployeeProfile;
-import com.example.demo.model.AnomalyFlagRecord;
-import com.example.demo.repository.ProductivityMetricRecordRepository;
-import com.example.demo.repository.AnomalyFlagRecordRepository;
-import com.example.demo.service.ProductivityMetricService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
 @Service
+@Transactional
 public class ProductivityMetricServiceImpl implements ProductivityMetricService {
 
     private final ProductivityMetricRecordRepository metricRepo;
-    private final AnomalyFlagRecordRepository anomalyFlagRepository;
+    private final EmployeeProfileRepository employeeRepo;
+    private final AnomalyRuleRepository ruleRepo;
+    private final AnomalyFlagRecordRepository flagRepo;
 
-    @Autowired
-    public ProductivityMetricServiceImpl(ProductivityMetricRecordRepository metricRepo,
-                                         AnomalyFlagRecordRepository anomalyFlagRepository) {
+    public ProductivityMetricServiceImpl(
+            ProductivityMetricRecordRepository metricRepo,
+            EmployeeProfileRepository employeeRepo,
+            AnomalyRuleRepository ruleRepo,
+            AnomalyFlagRecordRepository flagRepo) {
+
         this.metricRepo = metricRepo;
-        this.anomalyFlagRepository = anomalyFlagRepository;
+        this.employeeRepo = employeeRepo;
+        this.ruleRepo = ruleRepo;
+        this.flagRepo = flagRepo;
+    }
+
+    @Override
+    public ProductivityMetricRecord recordMetric(ProductivityMetricRecord metric) {
+
+        Long empId = metric.getEmployeeId();
+
+        EmployeeProfile employee = employeeRepo.findById(empId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+
+        if (!employee.getActive()) {
+            throw new IllegalStateException("Employee not active");
+        }
+
+        boolean exists = metricRepo
+                .findByEmployeeId(empId)
+                .stream()
+                .anyMatch(m -> m.getDate().equals(metric.getDate()));
+
+        if (exists) {
+            throw new IllegalStateException("Metric already exists");
+        }
+
+        double score = ProductivityCalculator.computeScore(
+                metric.getHoursLogged(),
+                metric.getTasksCompleted(),
+                metric.getMeetingsAttended()
+        );
+
+        metric.setProductivityScore(score);
+        metric.setSubmittedAt(LocalDateTime.now());
+
+        ProductivityMetricRecord saved = metricRepo.save(metric);
+
+        ruleRepo.findByActiveTrue().forEach(rule -> {
+            if (saved.getProductivityScore() < rule.getThresholdValue()) {
+                AnomalyFlagRecord flag = new AnomalyFlagRecord();
+                flag.setEmployeeId(empId);
+                flag.setMetricId(saved.getId());
+                flag.setRuleCode(rule.getRuleCode());
+                flag.setSeverity("LOW");
+                flag.setResolved(false);
+                flag.setFlaggedAt(LocalDateTime.now());
+                flagRepo.save(flag);
+            }
+        });
+
+        return saved;
+    }
+
+    @Override
+    public ProductivityMetricRecord updateMetric(Long id, ProductivityMetricRecord updated) {
+        ProductivityMetricRecord existing = metricRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Metric not found"));
+
+        existing.setHoursLogged(updated.getHoursLogged());
+        existing.setTasksCompleted(updated.getTasksCompleted());
+        existing.setMeetingsAttended(updated.getMeetingsAttended());
+
+        double score = ProductivityCalculator.computeScore(
+                existing.getHoursLogged(),
+                existing.getTasksCompleted(),
+                existing.getMeetingsAttended()
+        );
+
+        existing.setProductivityScore(score);
+
+        return metricRepo.save(existing);
     }
 
     @Override
@@ -32,45 +93,12 @@ public class ProductivityMetricServiceImpl implements ProductivityMetricService 
     }
 
     @Override
-    public Optional<ProductivityMetricRecord> getMetricByEmployeeAndDate(Long employeeId, LocalDate date) {
-        return metricRepo.findByEmployeeIdAndDate(employeeId, date);
-    }
-
-    @Override
-    public Optional<ProductivityMetricRecord> getMetricById(Long metricId) {
-        return metricRepo.findById(metricId);
-    }
-
-    @Override
-    public void createAnomalyFlag(EmployeeProfile employeeProfile, ProductivityMetricRecord metricRecord) {
-        AnomalyFlagRecord flag = new AnomalyFlagRecord(
-                employeeProfile,
-                metricRecord,
-                "RULE_CODE_1",
-                "HIGH",
-                "Detected anomaly details"
-        );
-        anomalyFlagRepository.save(flag);
-    }
-
-    @Override
-    public ProductivityMetricRecord saveMetric(ProductivityMetricRecord metricRecord) {
-        return metricRepo.save(metricRecord);
+    public Optional<ProductivityMetricRecord> getMetricById(Long id) {
+        return metricRepo.findById(id);
     }
 
     @Override
     public List<ProductivityMetricRecord> getAllMetrics() {
         return metricRepo.findAll();
-    }
-
-    @Override
-    public ProductivityMetricRecord updateMetric(Long metricId, ProductivityMetricRecord metric) {
-        return metricRepo.findById(metricId)
-                .map(existing -> {
-                    existing.setValue(metric.getValue()); // update fields
-                    existing.setDate(metric.getDate());
-                    return metricRepo.save(existing);
-                })
-                .orElseThrow(() -> new RuntimeException("Metric not found"));
     }
 }
