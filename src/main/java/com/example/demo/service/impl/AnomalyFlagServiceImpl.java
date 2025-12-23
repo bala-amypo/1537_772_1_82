@@ -29,13 +29,20 @@ public class AnomalyFlagServiceImpl implements AnomalyFlagService {
     }
 
     @Override
-    public void resolveFlag(AnomalyFlagRecord flag) {
+    public AnomalyFlagRecord resolveFlag(Long flagId) {
+        AnomalyFlagRecord flag = anomalyFlagRepository.findById(flagId)
+                .orElseThrow(() -> new RuntimeException("Flag not found"));
         flag.setResolved(true);
-        anomalyFlagRepository.save(flag);
+        return anomalyFlagRepository.save(flag);
     }
 
     @Override
-    public void saveFlag(AnomalyFlagRecord flag) {
-        anomalyFlagRepository.save(flag);
+    public AnomalyFlagRecord saveFlag(AnomalyFlagRecord flag) {
+        return anomalyFlagRepository.save(flag);
+    }
+
+    @Override
+    public List<AnomalyFlagRecord> getAllFlags() {
+        return anomalyFlagRepository.findAll();
     }
 }

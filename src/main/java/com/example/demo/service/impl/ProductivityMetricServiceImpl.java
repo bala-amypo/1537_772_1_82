@@ -37,14 +37,19 @@ public class ProductivityMetricServiceImpl implements ProductivityMetricService 
     }
 
     @Override
+    public ProductivityMetricRecord getMetricById(Long metricId) {
+        return metricRepo.findById(metricId)
+                .orElseThrow(() -> new RuntimeException("Metric not found"));
+    }
+
+    @Override
     public void createAnomalyFlag(EmployeeProfile employeeProfile, ProductivityMetricRecord metricRecord) {
-        // Create anomaly flag with correct constructor
         AnomalyFlagRecord flag = new AnomalyFlagRecord(
                 employeeProfile,
                 metricRecord,
-                "RULE_CODE_1",   // Example rule code
-                "HIGH",          // Severity
-                "Detected anomaly details" // Description
+                "RULE_CODE_1",
+                "HIGH",
+                "Detected anomaly details"
         );
         anomalyFlagRepository.save(flag);
     }
@@ -52,5 +57,10 @@ public class ProductivityMetricServiceImpl implements ProductivityMetricService 
     @Override
     public void saveMetric(ProductivityMetricRecord metricRecord) {
         metricRepo.save(metricRecord);
+    }
+
+    @Override
+    public List<ProductivityMetricRecord> getAllMetrics() {
+        return metricRepo.findAll();
     }
 }
