@@ -7,10 +7,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductivityMetricRecordRepository
-        extends JpaRepository<ProductivityMetricRecord, Long> {
+public interface ProductivityMetricRecordRepository extends JpaRepository<ProductivityMetricRecord, Long> {
 
-    List<ProductivityMetricRecord> findByEmployeeId(Long employeeId);
+    // Corrected: traverse the relationship to EmployeeProfile
+    List<ProductivityMetricRecord> findByEmployee_EmployeeId(String employeeId);
 
-    Optional<ProductivityMetricRecord> findByEmployeeIdAndDate(Long employeeId, LocalDate date);
+    Optional<ProductivityMetricRecord> findByEmployee_EmployeeIdAndDate(String employeeId, LocalDate date);
 }

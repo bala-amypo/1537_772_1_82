@@ -19,33 +19,33 @@ public class Credential {
     @Column(nullable = false)
     private String status;
 
+    /* ---------- Relationship to EmployeeProfile ---------- */
+    @ManyToOne
+    @JoinColumn(name = "employee_id", nullable = false)
+    private EmployeeProfile employee;
+
+    /* ---------- Constructors ---------- */
     public Credential() {}
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getExternalId() {
-        return externalId;
-    }
-
-    public void setExternalId(String externalId) {
+    public Credential(String externalId, String type, String status, EmployeeProfile employee) {
         this.externalId = externalId;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
         this.type = type;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
         this.status = status;
+        this.employee = employee;
     }
+
+    /* ---------- Getters & Setters ---------- */
+    public Long getId() { return id; }
+
+    public String getExternalId() { return externalId; }
+    public void setExternalId(String externalId) { this.externalId = externalId; }
+
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public EmployeeProfile getEmployee() { return employee; }
+    public void setEmployee(EmployeeProfile employee) { this.employee = employee; }
 }
