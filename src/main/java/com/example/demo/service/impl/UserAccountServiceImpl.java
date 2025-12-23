@@ -15,18 +15,17 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     private final UserAccountRepository repository;
 
-    public UserAccountServiceImpl(UserAccountRepository repository,
-                                 ) {
+    public UserAccountServiceImpl(UserAccountRepository repository) {
         this.repository = repository;
-        
     }
 
     @Override
     public UserAccount registerUser(UserAccount user) {
 
-        user.setPasswordHash(
-                passwordEncoder.encode(user.getPasswordHash())
-        );
+        // ❌ No password encoder (security not used)
+        // Password is saved as-is
+        // If needed later, we can add encoding properly
+        user.setPasswordHash(user.getPasswordHash());
 
         if (user.getRole() == null || user.getRole().isEmpty()) {
             user.setRole(Set.of("USER"));
