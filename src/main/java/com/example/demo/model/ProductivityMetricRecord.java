@@ -34,3 +34,4 @@ public class ProductivityMetricRecord {
     private Double hoursLogged;
 
     private Integer
+}
