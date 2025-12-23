@@ -1,49 +1,55 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "productivity_metric_records")
+@Table(
+    name = "productivity_metric_records",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"employee_id", "date"})
+)
 public class ProductivityMetricRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "employee_id", nullable = false)
-    private EmployeeProfile employee;
+    @Column(name = "employee_id", nullable = false)
+    private Long employeeId;
 
     @Column(nullable = false)
     private LocalDate date;
 
-    private int hoursLogged;
-    private int tasksCompleted;
-    private int meetingsAttended;
+    private Double hoursLogged;
 
-    private double productivityScore;
+    private Integer tasksCompleted;
 
-    @Lob
+    private Integer meetingsAttended;
+
+    private Double productivityScore;
+
+    @Column(columnDefinition = "TEXT")
     private String rawDataJson;
 
-    @OneToMany
-    @JoinColumn(name = "metric_record_id")
-    private List<AnomalyFlagRecord> anomalyFlags;
+    private LocalDateTime submittedAt;
 
-    // -------- getters & setters --------
+    public ProductivityMetricRecord() {
+    }
+
+    /* ================= GETTERS & SETTERS ================= */
 
     public Long getId() {
         return id;
     }
 
-    public EmployeeProfile getEmployee() {
-        return employee;
+    public Long getEmployeeId() {
+        return employeeId;
     }
 
-    public void setEmployee(EmployeeProfile employee) {
-        this.employee = employee;
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
     }
 
     public LocalDate getDate() {
@@ -54,35 +60,35 @@ public class ProductivityMetricRecord {
         this.date = date;
     }
 
-    public int getHoursLogged() {
-        return hoursLogged;
+    public Double getHoursLogged() {
+        return hoursLogged == null ? 0.0 : hoursLogged;
     }
 
-    public void setHoursLogged(int hoursLogged) {
+    public void setHoursLogged(Double hoursLogged) {
         this.hoursLogged = hoursLogged;
     }
 
-    public int getTasksCompleted() {
-        return tasksCompleted;
+    public Integer getTasksCompleted() {
+        return tasksCompleted == null ? 0 : tasksCompleted;
     }
 
-    public void setTasksCompleted(int tasksCompleted) {
+    public void setTasksCompleted(Integer tasksCompleted) {
         this.tasksCompleted = tasksCompleted;
     }
 
-    public int getMeetingsAttended() {
-        return meetingsAttended;
+    public Integer getMeetingsAttended() {
+        return meetingsAttended == null ? 0 : meetingsAttended;
     }
 
-    public void setMeetingsAttended(int meetingsAttended) {
+    public void setMeetingsAttended(Integer meetingsAttended) {
         this.meetingsAttended = meetingsAttended;
     }
 
-    public double getProductivityScore() {
+    public Double getProductivityScore() {
         return productivityScore;
     }
 
-    public void setProductivityScore(double productivityScore) {
+    public void setProductivityScore(Double productivityScore) {
         this.productivityScore = productivityScore;
     }
 
@@ -94,11 +100,11 @@ public class ProductivityMetricRecord {
         this.rawDataJson = rawDataJson;
     }
 
-    public List<AnomalyFlagRecord> getAnomalyFlags() {
-        return anomalyFlags;
+    public LocalDateTime getSubmittedAt() {
+        return submittedAt;
     }
 
-    public void setAnomalyFlags(List<AnomalyFlagRecord> anomalyFlags) {
-        this.anomalyFlags = anomalyFlags;
+    public void setSubmittedAt(LocalDateTime submittedAt) {
+        this.submittedAt = submittedAt;
     }
 }
