@@ -11,33 +11,26 @@ public class CredentialVerificationEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String credentialExternalId;
+    private Long credentialId;
 
-    @Column(nullable = false)
     private String status;
+
+    private String remarks;
 
     private LocalDateTime verifiedAt;
 
-    public CredentialVerificationEvent() {
-    }
-
-    public CredentialVerificationEvent(String credentialExternalId, String status) {
-        this.credentialExternalId = credentialExternalId;
-        this.status = status;
-        this.verifiedAt = LocalDateTime.now();
-    }
+    public CredentialVerificationEvent() {}
 
     public Long getId() {
         return id;
     }
 
-    public String getCredentialExternalId() {
-        return credentialExternalId;
+    public Long getCredentialId() {
+        return credentialId;
     }
 
-    public void setCredentialExternalId(String credentialExternalId) {
-        this.credentialExternalId = credentialExternalId;
+    public void setCredentialId(Long credentialId) {
+        this.credentialId = credentialId;
     }
 
     public String getStatus() {
@@ -46,6 +39,14 @@ public class CredentialVerificationEvent {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
     }
 
     public LocalDateTime getVerifiedAt() {
