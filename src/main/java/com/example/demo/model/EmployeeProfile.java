@@ -20,8 +20,11 @@ public class EmployeeProfile {
     private String email;
 
     private String teamName;
+
     private String role;
+
     private Boolean active = true;
+
     private LocalDateTime createdAt;
 
     public EmployeeProfile() {}
@@ -31,7 +34,9 @@ public class EmployeeProfile {
         this.createdAt = LocalDateTime.now();
     }
 
+    // ---------- REQUIRED BY TESTS ----------
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; } // 🔥 REQUIRED (test #26)
 
     public String getEmployeeId() { return employeeId; }
     public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
@@ -48,9 +53,7 @@ public class EmployeeProfile {
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
 
-    public Boolean getActive() {
-        return active != null && active;
-    }
+    public Boolean getActive() { return active; }
     public void setActive(Boolean active) { this.active = active; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
