@@ -5,33 +5,32 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-    name = "productivity_metric_records",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"employee_id", "date"})
-)
+@Table(name = "productivity_metrics")
 public class ProductivityMetricRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "employee_id", nullable = false)
     private Long employeeId;
 
-    @Column(nullable = false)
     private LocalDate date;
 
-    private Double hoursLogged;
-    private Integer tasksCompleted;
-    private Integer meetingsAttended;
-    private Double productivityScore;
+    private double hoursLogged;          // ✅ primitive
+    private int tasksCompleted;           // ✅ primitive
+    private int meetingsAttended;         // ✅ primitive
+
+    private double productivityScore;     // ✅ primitive
 
     @Column(columnDefinition = "TEXT")
     private String rawDataJson;
 
     private LocalDateTime submittedAt;
 
+    // ---------------- GETTERS / SETTERS ----------------
+
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public Long getEmployeeId() { return employeeId; }
     public void setEmployeeId(Long employeeId) { this.employeeId = employeeId; }
@@ -39,27 +38,17 @@ public class ProductivityMetricRecord {
     public LocalDate getDate() { return date; }
     public void setDate(LocalDate date) { this.date = date; }
 
-    public Double getHoursLogged() {
-        return hoursLogged == null ? 0.0 : hoursLogged;
-    }
-    public void setHoursLogged(Double hoursLogged) { this.hoursLogged = hoursLogged; }
+    public double getHoursLogged() { return hoursLogged; }
+    public void setHoursLogged(double hoursLogged) { this.hoursLogged = hoursLogged; }
 
-    public Integer getTasksCompleted() {
-        return tasksCompleted == null ? 0 : tasksCompleted;
-    }
-    public void setTasksCompleted(Integer tasksCompleted) { this.tasksCompleted = tasksCompleted; }
+    public int getTasksCompleted() { return tasksCompleted; }
+    public void setTasksCompleted(int tasksCompleted) { this.tasksCompleted = tasksCompleted; }
 
-    public Integer getMeetingsAttended() {
-        return meetingsAttended == null ? 0 : meetingsAttended;
-    }
-    public void setMeetingsAttended(Integer meetingsAttended) { this.meetingsAttended = meetingsAttended; }
+    public int getMeetingsAttended() { return meetingsAttended; }
+    public void setMeetingsAttended(int meetingsAttended) { this.meetingsAttended = meetingsAttended; }
 
-    public Double getProductivityScore() {
-        return productivityScore == null ? 0.0 : productivityScore;
-    }
-    public void setProductivityScore(Double productivityScore) {
-        this.productivityScore = productivityScore;
-    }
+    public double getProductivityScore() { return productivityScore; }
+    public void setProductivityScore(double productivityScore) { this.productivityScore = productivityScore; }
 
     public String getRawDataJson() { return rawDataJson; }
     public void setRawDataJson(String rawDataJson) { this.rawDataJson = rawDataJson; }
