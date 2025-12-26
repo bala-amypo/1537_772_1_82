@@ -7,9 +7,7 @@ import java.util.Set;
 @Entity
 @Table(
     name = "user_accounts",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = "email")
-    }
+    uniqueConstraints = @UniqueConstraint(columnNames = "email")
 )
 public class UserAccount {
 
@@ -31,32 +29,16 @@ public class UserAccount {
         joinColumns = @JoinColumn(name = "user_id")
     )
     @Column(name = "role")
-    private Set<String> role;
+    private Set<String> roles;
 
     private LocalDateTime createdAt;
 
-    /* ---------- Constructors ---------- */
-
     public UserAccount() {}
-
-    public UserAccount(String username,
-                       String email,
-                       String passwordHash,
-                       Set<String> role) {
-        this.username = username;
-        this.email = email;
-        this.passwordHash = passwordHash;
-        this.role = role;
-    }
-
-    /* ---------- Lifecycle ---------- */
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
-
-    /* ---------- Getters & Setters ---------- */
 
     public Long getId() { return id; }
 
@@ -69,8 +51,8 @@ public class UserAccount {
     public String getPasswordHash() { return passwordHash; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
-    public Set<String> getRole() { return role; }
-    public void setRole(Set<String> role) { this.role = role; }
+    public Set<String> getRoles() { return roles; }
+    public void setRoles(Set<String> roles) { this.roles = roles; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 }
