@@ -22,13 +22,9 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public UserAccount registerUser(UserAccount user) {
 
-        // ❌ No password encoder (security not used)
-        // Password is saved as-is
-        // If needed later, we can add encoding properly
-        user.setPasswordHash(user.getPasswordHash());
-
-        if (user.getRole() == null || user.getRole().isEmpty()) {
-            user.setRole(Set.of("USER"));
+        // Default role assignment if missing
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            user.setRoles(Set.of("USER"));   // ✅ FIXED
         }
 
         return repository.save(user);
@@ -37,12 +33,14 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public UserAccount findByEmail(String email) {
         return repository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
     }
 
     @Override
     public UserAccount findById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
     }
 }
