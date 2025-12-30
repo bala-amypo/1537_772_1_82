@@ -15,7 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableMethodSecurity   // ✅ REQUIRED for @PreAuthorize
+@EnableMethodSecurity   // enables @PreAuthorize
 public class SecurityConfig {
 
     @Bean
@@ -44,28 +44,32 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http)
-            throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm ->
                 sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+
+                // ✅ Public endpoints
                 .requestMatchers(
                         "/auth/register",
                         "/auth/login",
                         "/swagger-ui/**",
-                        "/v3/api-docs/**"
+                        "/v3/api-docs/**",
+                        "/api/employees/**"   // ✅ FIX: allow employees API
                 ).permitAll()
+
+                // 🔒 Secured endpoints (JWT required)
                 .requestMatchers(
-                        "/api/employees/**",
                         "/api/metrics/**",
                         "/api/anomaly-rules/**",
                         "/api/anomalies/**",
                         "/api/team-summaries/**",
                         "/api/credentials/**"
                 ).authenticated()
+
                 .anyRequest().permitAll()
             );
 
